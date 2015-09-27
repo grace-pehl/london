@@ -1,0 +1,53 @@
+---
+title: "London Crime Rates"
+author: "Grace Pehl, PhD"
+date: "September 27, 2015"
+output: 
+  ioslides_presentation: 
+    keep_md: yes
+    smaller: yes
+    transition: faster
+runtime: shiny
+---
+
+```{r echo=FALSE}
+library(shiny)
+library(leaflet)
+library(sp)
+```
+
+## Data Wrangling
+
+- London crime data and population data came from the [London Data Store](http://data.london.gov.uk/dataset).
+
+- I used the dplyr package combine the dataset, summarize crime by category and borough (neighborhood), and calculate the rate based the population of each borough.
+
+- Spatial data came from Robin Lovelace's [spatial information in R](https://github.com/Robinlovelace/Creating-maps-in-R) tutorial.
+
+## Spatial Data in R Uses an S4 Dataframe
+```{r, echo=FALSE}
+london <- readRDS(file = 'data/crime.Rds')
+df <- london
+```
+```{r}
+# df@data acts as a typical dataframe
+df@class # the type of dataframe: polygons, lines, or points
+df@bbox # the lat/long of the bounding box
+df@proj4string # the map projection used to plot the map
+```
+
+## Making Maps with Leaflet
+View the complete app at the [shiny apps](https://gracepehl.shinyapps.io/LondonMap) site.
+```{r}
+leaflet(data = london) %>% addTiles() %>% addPolygons(color = "black", weight = 1)
+```
+
+## Results of Data Analysis App
+
+* The crime rate for the London borough of Westminster is much higher than the rest of London.
+
+* Separating the crime rates by category reveals that most of the variation is in the rate of Theft & Handling crimes.
+
+* Westminster is the tourist district of London, so there are far more people there then the resident population used to compute the rate.  The presence of tourists also draws more pick-pocket types of theft.
+
+
